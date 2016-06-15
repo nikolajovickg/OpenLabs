@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WEB Laboratorija</title>
+<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<style>
+
+</style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8 text-center">
+        <div id='proba'></div>
+        <div id='sifra'></div>
+
+        <img src="http://147.91.203.60:8081/video.mjpg?q=30&fps=33" class="img-responsive center-block"></img>
+        <div class="center-block">
+          <form  id = "uploadForma" action ="/lab/upload/proba" enctype="multipart/form-data" method="post">
+            <input type="text" name="title">
+            <input type="file" class = "center-block" name="upload" multiple="multiple">
+            <input type="submit" value="Upload">
+          </form>
+        </div>
+        <br>
+        <div class="center-block">
+          <button id = "sw0" type="button" class="btn btn-success">SW0</button>
+          <button id = "sw1" type="button" class="btn btn-success">SW1</button>
+          <button type="button" class="btn btn-success">SW2</button>
+          <button type="button" class="btn btn-success">SW3</button>
+          <button type="button" class="btn btn-success">SW4</button>
+          <button type="button" class="btn btn-success">SW5</button>
+          <button type="button" class="btn btn-success">SW6</button>
+          <button type="button" class="btn btn-success">SW7</button>
+          <span>  &emsp;  </span>
+          <button type="button" class="btn btn-success">BTN0</button>
+          <button type="button" class="btn btn-success">BTN1</button>
+          <button type="button" class="btn btn-success">BTN2</button>
+          <button type="button" class="btn btn-success">BTN3</button>
+        </div>
+      <div class="col-md-2">
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+var socket = io.connect('http://147.91.203.60:3001/client-lab');
+socket.on('ssw0', function(data){
+  if (!data){
+      if ($('#sw0').hasClass('btn-danger')){
+        $('#sw0').removeClass('btn-danger');
+      }
+    } else {
+      $('#sw0').addClass('btn-danger');
+    }
+});
+socket.on('ssw1', function(data){
+  if (!data){
+      if ($('#sw1').hasClass('btn-danger')){
+        $('#sw1').removeClass('btn-danger');
+      }
+    } else {
+      $('#sw1').addClass('btn-danger');
+    }
+});
+$('#sw0').click(function(dugme){
+    socket.emit('sw0');
+});
+$('#sw1').click(function(dugme){
+    socket.emit('sw1');
+});
+</script>
+</body>
+</html>

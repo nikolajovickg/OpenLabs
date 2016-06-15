@@ -1,0 +1,44 @@
+# inicijalna podesavanja P/PI/PID regulatora
+# Promenljive se cuvaju i pozivaju iz recnika pod nazivom prom
+import time
+def podesavanje(prom):
+	prom['Kp'] =  0.4 #podesavanje vrednoti proporcionalnog pojacanja
+	prom['Ti'] =  0.5# vremenska konstanta integralnog dejstva
+	prom['Td'] = 0.1 # vremenska konstanta diferencijalnog dejstva
+	prom['SP'] = 1 # podesavanje zeljene vrednosti signala
+	prom['tp'] = 5 # podesavanje vremena kada pocinje da deluje poremecaj
+	prom['po'] = 0.3 # vrednost poremecaja ukoliko je poremecaj tipa STEP
+	prom['ei'] = 0 # integral greske, na pocetku nula
+	prom['ed'] = 0 # izvod greske, na pocetku nula
+	prom['gi'] = (-5, 5) # podesavanje granice integratora, da ne bi dolazilo do namotavanja
+	prom['prethodno'] = time.time() # cuva vreme iz predhodnog ciklusa, tako da je dt = trenutnoVreme - prethodnoVreme
+	prom['py'] = 0 # y iz prethodnog ciklusa
+	prom['tip'] = 'P' # bira se tip kontrolera, moze P, PI ili PID
+	prom['gpid'] = (-15,15) # granice PID regulatora
+	prom['red'] = 2
+# Kontrolna petlja
+def petlja(t,y,prom):
+	dt = time.time() - prom['prethodno'] # razlika u vremenu izmedju dva ciklusa
+	prom['prethodno'] = time.time()
+	if t >= prom['tp']: # pocetak delovanja poremecaja		y = y - prom['po'] # ukoliko je poremecaj tipa STEP
+		d = prom['po']
+	else:
+		d = 0
+	e = prom['SP'] - y # trenutna greska
+	prom['ei'] += e * dt # integral greske
+	# zasicenje integrala, da ne bi isao u beskonacnost
+	if prom['ei'] > prom['gi'][1] : prom['ei'] = prom['gi'][1]
+	if prom['ei'] < prom['gi'][0] : prom['ei'] = prom['gi'][0]
+	prom['ed'] = - (y - prom['py']) / dt # izvod ulaza, ne radi se izvod greske, jer prilikom promene zeljenog izlaza
+	#ili prilikom poremecaja tipa STEP, izvod bi tezio beskonacnosti, tako da de/dt = d(SP)/dt - d(y)/dt postaje de/dt=-d(y)/dt
+	prom['py'] = y # definisemo prethodno y za sledeci ciklus
+	if prom['tip'] == 'P': # ako hocemo samo P kontroler
+		upravljanje = prom['Kp']*e - d
+	elif prom['tip'] == 'PI': # PI regulator
+		upravljanje = prom['Kp']*(e + 1/prom['Ti'] * prom['ei']) - d
+	else:	# u ostalim slucajevima PID regulator
+		upravljanje = prom['Kp']*(e + 1/prom['Ti'] * prom['ei'] + prom['Td'] * prom['ed']) - d
+	if upravljanje > prom['gpid'][1] : upravljanje = prom['gpid'][1]
+	if upravljanje < prom['gpid'][0] : upravljanje = prom['gpid'][0]
+	print str(t) + ',' + str(upravljanje) + ',' + str(y) + ',' + str(d) # stampa relevantnih promenljivih (vreme, upravljanje, izlaz, poremecaj)
+	return upravljanje	# izlaz

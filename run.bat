@@ -1,0 +1,1 @@
+echo y | djtgcfg prog -d Nexys2 -i 0 -f ./script/program.bit

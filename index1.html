@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+  </head>
+  <body>
+    <script>
+    $(document).ready(function() {
+      var socket = io();
+      $('#klik').click(function()
+      {
+        console.log('ovde radi');
+        socket.emit('ruta',$("#tb").val());
+      });
+      socket.on('w', function(msg){
+        $("#p").text(msg);
+      });
+    });
+    </script>
+    <div id="klik">
+      <a href = "#">Ovo klikni</a>
+    </div>
+    <input type = "text" id = "tb" />
+    <div id = "p">
+    </div>
+  </body>
+</html>

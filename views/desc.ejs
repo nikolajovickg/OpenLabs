@@ -1,0 +1,136 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<title>WEB Laboratorija</title>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://cdn.socket.io/socket.io-1.3.7.js"></script>
+<script src="/public/js/kontroler.js"></script>
+<style>
+img{
+  max-width:100%;
+  max-height:100%;
+}
+
+
+.panel-primary > .panel-heading a:after {
+  font-family:'Glyphicons Halflings';
+  content:"\e114";
+  float: right;
+  color: whitesmoke;
+}
+.panel-primary > .panel-heading a.collapsed:after {
+    content:"\e080";
+}
+.panel-heading a:after {
+    font-family:'Glyphicons Halflings';
+    content:"\e114";
+    float: right;
+    color: grey;
+}
+.panel-heading a.collapsed:after {
+    content:"\e080";
+}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-static-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <div class="navbar-brand"> OpenLabs </div>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="http://147.91.203.57:3000"> <%= home %> </a></li>
+      <li><a href= <%= jezikLink %>> <%= jezik %> </a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="http://147.91.203.57:3000/logout"><span class = "glyphicon glyphicon-log-out"></span> <%= logout %></a></li>
+    </ul>
+  </div>
+</nav>
+<br>
+<br>
+<div class="container-fluid">
+  <div class = "row">
+    <%# Leva strana ekrana %>
+    <div class = "col-md-2">
+      <h4> <span id = "vremeOpis"> <%= vremeOpis %> : </span> <span id = "vreme"> </span> </h4> <br> <br>
+      <button id = "dugme" type = "button" class="btn btn-primary btn-lg btn-block"> <%= ulazak %></button>
+    </div>
+    <%# Centralni deo sa opisom i svime bitnim %>
+    <%# Kartica 1 %>
+    <div class = "col-md-7">
+      <div class="jumbotron">
+        <h2> <%= ime %> </h2>
+        <%= vtrajanja %> : <%= vreme %> <br>
+        <%= imepredmeta %> : <%= predmet %>
+      </div>
+      <%# Kartice u sredini%>
+      <%
+        for (var i = 0; i < eksperiment.length; i++){
+        var obj = eksperiment[i]; %>
+        <div class="panel-group">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                <a data-toggle="collapse" data-target= <%= '#' + obj.naziv %> href=<%= '#' + obj.naziv +'' %> > <%= obj.naziv %> </a>
+              </h4>
+            </div>
+            <div id=<%= obj.naziv  %> class = "panel-collapse collapse ">
+              <div class="panel-body"> <%- obj.tekst %></div>
+            </div>
+          </div>
+        </div><%}
+      %>
+    </div>
+
+    <%# Desni deo, linkovi, vesti, i tako to %>
+    <div class = "col-md-3">
+      <%# Ovo je za obavestenja %>
+      <div class = "panel-group">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-target="#obavestenje" href="#obavestenje"> <%= obavjezik %> </a>
+            </h4>
+          </div>
+          <div id="obavestenje" class = "panel-collapse collapse in">
+            <div class="panel-body" style="
+            overflow-y  : scroll;
+            overflow-x  : hidden;
+            height    : 20%;">
+            <ul>
+              <% for (var i = obavestenja.length - 1; i > 0 ; i--){
+                var obj = obavestenja[i]; %>
+                  <li> <%= obj.datum %> - <%= obj.tekst %> </li>
+                <%
+              }
+              %>
+            <li class = "text-success"> <%= obavestenja[obavestenja.length-1].datum %> - <%= obavestenja[obavestenja.length-1].tekst %> </li>
+            </ul>
+            </div>
+          </div>
+        </div>
+    </div>
+    <%# Ovo je za linkove %>
+    <div class = "panel-group">
+      <div class="panel panel-primary">
+        <div class="panel-heading inv">
+          <h4 class="panel-title">
+            <a data-toggle="collapse" data-target="#linkovi" href="#linkovi"> <%= linkjezik %> </a>
+          </h4>
+        </div>
+        <div id="linkovi" class = "panel-collapse collapse in">
+          <div class="panel-body" style="
+          overflow-y  : scroll;
+          overflow-x  : hidden;
+          height    : 20%;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

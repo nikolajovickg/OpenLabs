@@ -1,0 +1,15 @@
+{
+  "home"        :     "Home",
+  "jezikLink"   :     "http://147.91.203.57:3002/",
+  "jezik"       :     "Srpski",
+  "logout"      :     "Logout",
+  "ime"         :     "L3 & L4 - Closed loop control systems",
+  "vtrajanja"   :     "Duration",
+  "vreme"       :     "5 minutes",
+  "imepredmeta" :     "Course",
+  "predmet"     :     "Measurement and control",
+  "opisjezik"   :     "Description of experiment",
+  "opis"        :     "This is only a placeholder.<br>Somewhere in the near future, full fledged description will be placed instead of this :)",
+  "obavjezik"   :     "News",
+  "linkjezik"   :     "Useful links"
+}

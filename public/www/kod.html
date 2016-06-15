@@ -1,0 +1,105 @@
+
+<!-- saved from url=(0053)file:///C:/Users/joksa/AppData/Local/Temp/PID.py.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="UTF-8">
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.1.0/highlight.min.js"></script>
+  <style>
+  .hljs{display:block;overflow-x:auto;padding:0.5em;color:#333;background:#f8f8f8}.hljs-comment,.hljs-quote{color:#998;font-style:italic}.hljs-keyword,.hljs-selector-tag,.hljs-subst{color:#333;font-weight:bold}.hljs-number,.hljs-literal,.hljs-variable,.hljs-template-variable,.hljs-tag .hljs-attr{color:#008080}.hljs-string,.hljs-doctag{color:#d14}.hljs-title,.hljs-section,.hljs-selector-id{color:#900;font-weight:bold}.hljs-subst{font-weight:normal}.hljs-type,.hljs-class .hljs-title{color:#458;font-weight:bold}.hljs-tag,.hljs-name,.hljs-attribute{color:#000080;font-weight:normal}.hljs-regexp,.hljs-link{color:#009926}.hljs-symbol,.hljs-bullet{color:#990073}.hljs-built_in,.hljs-builtin-name{color:#0086b3}.hljs-meta{color:#999;font-weight:bold}.hljs-deletion{background:#fdd}.hljs-addition{background:#dfd}.hljs-emphasis{font-style:italic}.hljs-strong{font-weight:bold}
+    .telo {
+      margin: 0px;
+      padding: 15px;
+      font-size: 12
+    }
+    .hljs {
+      margin: -15px;
+      word-wrap: break-word;
+    }
+    .body, .hljs {
+      font-family: ;
+    }
+    .number {
+      float:left;
+      text-align: right;
+      display: inline-block;
+      margin-right: 5px;
+    }
+    .ln {
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body class = "telo">
+<pre><code class="py hljs python">
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">1</span></span></span><span class="code"><span class="hljs-comment"># inicijalna podesavanja P/PI/PID regulatora</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">2</span></span></span><span class="code"><span class="hljs-comment"># Promenljive se cuvaju i pozivaju iz recnika pod nazivom prom</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">3</span></span></span><span class="code"><span class="hljs-keyword">import</span> time</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">4</span></span></span><span class="code"><span class="hljs-keyword">def</span> podesavanje(prom):</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">5</span></span></span><span class="code">	prom[<span class="hljs-string">'Kp'</span>] =  <span class="hljs-number">0.4</span> <span class="hljs-comment">#podesavanje vrednoti proporcionalnog pojacanja</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">6</span></span></span><span class="code">	prom[<span class="hljs-string">'Ti'</span>] =  <span class="hljs-number">0.5</span><span class="hljs-comment"># vremenska konstanta integralnog dejstva</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">7</span></span></span><span class="code">	prom[<span class="hljs-string">'Td'</span>] = <span class="hljs-number">0.1</span> <span class="hljs-comment"># vremenska konstanta diferencijalnog dejstva</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">8</span></span></span><span class="code">	prom[<span class="hljs-string">'SP'</span>] = <span class="hljs-number">1</span> <span class="hljs-comment"># podesavanje zeljene vrednosti signala</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">9</span></span></span><span class="code">	prom[<span class="hljs-string">'tp'</span>] = <span class="hljs-number">5</span> <span class="hljs-comment"># podesavanje vremena kada pocinje da deluje poremecaj</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">10</span></span></span><span class="code">	prom[<span class="hljs-string">'po'</span>] = <span class="hljs-number">0.3</span> <span class="hljs-comment"># vrednost poremecaja ukoliko je poremecaj tipa STEP</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">11</span></span></span><span class="code">	prom[<span class="hljs-string">'ei'</span>] = <span class="hljs-number">0</span> <span class="hljs-comment"># integral greske, na pocetku nula</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">12</span></span></span><span class="code">	prom[<span class="hljs-string">'ed'</span>] = <span class="hljs-number">0</span> <span class="hljs-comment"># izvod greske, na pocetku nula</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">13</span></span></span><span class="code">	prom[<span class="hljs-string">'gi'</span>] = (<span class="hljs-number">-5</span>, <span class="hljs-number">5</span>) <span class="hljs-comment"># podesavanje granice integratora, da ne bi dolazilo do namotavanja</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">14</span></span></span><span class="code">	prom[<span class="hljs-string">'prethodno'</span>] = time.time() <span class="hljs-comment"># cuva vreme iz predhodnog ciklusa, tako da je dt = trenutnoVreme - prethodnoVreme</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">15</span></span></span><span class="code">	prom[<span class="hljs-string">'py'</span>] = <span class="hljs-number">0</span> <span class="hljs-comment"># y iz prethodnog ciklusa</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">16</span></span></span><span class="code">	prom[<span class="hljs-string">'tip'</span>] = <span class="hljs-string">'P'</span> <span class="hljs-comment"># bira se tip kontrolera, moze P, PI ili PID</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">17</span></span></span><span class="code">	prom[<span class="hljs-string">'gpid'</span>] = (<span class="hljs-number">-15</span>,<span class="hljs-number">15</span>) <span class="hljs-comment"># granice PID regulatora</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">18</span></span></span><span class="code">	prom[<span class="hljs-string">'red'</span>] = <span class="hljs-number">2</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">19</span></span></span><span class="code"><span class="hljs-comment"># Kontrolna petlja</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">20</span></span></span><span class="code"><span class="hljs-keyword">def</span> petlja(t,y,prom):</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">21</span></span></span><span class="code">	dt = time.time() - prom[<span class="hljs-string">'prethodno'</span>] <span class="hljs-comment"># razlika u vremenu izmedju dva ciklusa</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">22</span></span></span><span class="code">	prom[<span class="hljs-string">'prethodno'</span>] = time.time()</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">23</span></span></span><span class="code">	<span class="hljs-keyword">if</span> t &gt;= prom[<span class="hljs-string">'tp'</span>]: <span class="hljs-comment"># pocetak delovanja poremecaja		y = y - prom['po'] # ukoliko je poremecaj tipa STEP</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">24</span></span></span><span class="code">		d = prom[<span class="hljs-string">'po'</span>]</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">25</span></span></span><span class="code">	<span class="hljs-keyword">else</span>:</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">26</span></span></span><span class="code">		d = <span class="hljs-number">0</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">27</span></span></span><span class="code">	e = prom[<span class="hljs-string">'SP'</span>] - y <span class="hljs-comment"># trenutna greska</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">28</span></span></span><span class="code">	prom[<span class="hljs-string">'ei'</span>] += e * dt <span class="hljs-comment"># integral greske</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">29</span></span></span><span class="code">	<span class="hljs-comment"># zasicenje integrala, da ne bi isao u beskonacnost</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">30</span></span></span><span class="code">	<span class="hljs-keyword">if</span> prom[<span class="hljs-string">'ei'</span>] &gt; prom[<span class="hljs-string">'gi'</span>][<span class="hljs-number">1</span>] : prom[<span class="hljs-string">'ei'</span>] = prom[<span class="hljs-string">'gi'</span>][<span class="hljs-number">1</span>]</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">31</span></span></span><span class="code">	<span class="hljs-keyword">if</span> prom[<span class="hljs-string">'ei'</span>] &lt; prom[<span class="hljs-string">'gi'</span>][<span class="hljs-number">0</span>] : prom[<span class="hljs-string">'ei'</span>] = prom[<span class="hljs-string">'gi'</span>][<span class="hljs-number">0</span>]</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">32</span></span></span><span class="code">	prom[<span class="hljs-string">'ed'</span>] = - (y - prom[<span class="hljs-string">'py'</span>]) / dt <span class="hljs-comment"># izvod ulaza, ne radi se izvod greske, jer prilikom promene zeljenog izlaza</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">33</span></span></span><span class="code">	<span class="hljs-comment">#ili prilikom poremecaja tipa STEP, izvod bi tezio beskonacnosti, tako da de/dt = d(SP)/dt - d(y)/dt postaje de/dt=-d(y)/dt</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">34</span></span></span><span class="code">	prom[<span class="hljs-string">'py'</span>] = y <span class="hljs-comment"># definisemo prethodno y za sledeci ciklus</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">35</span></span></span><span class="code">	<span class="hljs-keyword">if</span> prom[<span class="hljs-string">'tip'</span>] == <span class="hljs-string">'P'</span>: <span class="hljs-comment"># ako hocemo samo P kontroler</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">36</span></span></span><span class="code">		upravljanje = prom[<span class="hljs-string">'Kp'</span>]*e - d</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">37</span></span></span><span class="code">	<span class="hljs-keyword">elif</span> prom[<span class="hljs-string">'tip'</span>] == <span class="hljs-string">'PI'</span>: <span class="hljs-comment"># PI regulator</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">38</span></span></span><span class="code">		upravljanje = prom[<span class="hljs-string">'Kp'</span>]*(e + <span class="hljs-number">1</span>/prom[<span class="hljs-string">'Ti'</span>] * prom[<span class="hljs-string">'ei'</span>]) - d</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">39</span></span></span><span class="code">	<span class="hljs-keyword">else</span>:	<span class="hljs-comment"># u ostalim slucajevima PID regulator</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">40</span></span></span><span class="code">		upravljanje = prom[<span class="hljs-string">'Kp'</span>]*(e + <span class="hljs-number">1</span>/prom[<span class="hljs-string">'Ti'</span>] * prom[<span class="hljs-string">'ei'</span>] + prom[<span class="hljs-string">'Td'</span>] * prom[<span class="hljs-string">'ed'</span>]) - d</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">41</span></span></span><span class="code">	<span class="hljs-keyword">if</span> upravljanje &gt; prom[<span class="hljs-string">'gpid'</span>][<span class="hljs-number">1</span>] : upravljanje = prom[<span class="hljs-string">'gpid'</span>][<span class="hljs-number">1</span>]</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">42</span></span></span><span class="code">	<span class="hljs-keyword">if</span> upravljanje &lt; prom[<span class="hljs-string">'gpid'</span>][<span class="hljs-number">0</span>] : upravljanje = prom[<span class="hljs-string">'gpid'</span>][<span class="hljs-number">0</span>]</span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">43</span></span></span><span class="code">	<span class="hljs-keyword">print</span> str(t) + <span class="hljs-string">','</span> + str(upravljanje) + <span class="hljs-string">','</span> + str(y) + <span class="hljs-string">','</span> + str(d) <span class="hljs-comment"># stampa relevantnih promenljivih (vreme, upravljanje, izlaz, poremecaj)</span></span>
+<span class="number" style="width: 20px; height: 14px;"><span class="ln hljs-subst"><span class="ln hljs-subst">44</span></span></span><span class="code">	<span class="hljs-keyword">return</span> upravljanje	<span class="hljs-comment"># izlaz</span></span>
+<span class="number" style="width: 20px; height: 0px;"><span class="ln hljs-subst"><span class="ln hljs-subst">45</span></span></span><span class="code"></span>
+</code></pre>
+<script>hljs.initHighlightingOnLoad();</script>
+<script>
+  setTimeout(function() {
+    $(".number").css("width", "20px");
+    $(".number span").attr("class", "ln hljs-subst");
+    resize();
+    var timer = false;
+    $(window).resize(function() {
+      if (timer !== false) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(function() {
+        resize();
+      }, 200);
+    })
+
+  }, 100);
+  function resize() {
+    $("span.code").each(function(i, c) {
+      var h = $(c).height();
+      $(c).prev().height(h);
+    });
+  }
+</script>
+
+</body></html>

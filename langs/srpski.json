@@ -1,0 +1,32 @@
+{
+  "home"        :     "Početna strana",
+  "jezikLink"   :     "http://147.91.203.57:3002/en",
+  "jezik"       :     "English",
+  "logout"      :     "Odjava",
+  "ime"         :     "Programiranje FPGA Uređaja - MIT 6.111",
+  "vtrajanja"   :     "Vreme trajanja",
+  "vreme"       :     "25 minuta",
+  "imepredmeta" :     "Ime predmeta",
+  "predmet"     :     "Projektovanje digitalnih sistema",
+  "obavjezik"   :     "Obaveštenja",
+  "linkjezik"   :     "Korisni linkovi",
+  "epjezik"     :     "Eksperimentalna postavka",
+  "vremeOpis"   :     "Slobodno za",
+  "ulazak"      :     "Uđi u vežbu",
+  "eksperiment" :     [
+    { "id"    : 1,
+      "naziv" :  "Opis eksperimenta",
+      "tekst" :  "Studentu se pomoću web laboratorije omogućava da uspešno izvrši MIT 6.111 kurs koji se tiče programiranja FPGA uređaja. <br> Student ima mogućnost da radi na uređaju Digilent Nexys2."
+    },
+    { "id"     : 2,
+      "naziv"  : "Eksperimentalna postavka",
+      "tekst"  : "1 x Digilent Nexys 2 FPGA (Xilinx spartan 3E-500 <br> 1 x Arduino Leonardo)"
+    }
+  ],
+  "obavestenja" :     [
+    { "id"    : 1,
+      "datum" : "19.01.2016 9:54 pm",
+      "tekst" : "Laboratorijska vežba 3 je puštena online"
+    }
+  ]
+}
